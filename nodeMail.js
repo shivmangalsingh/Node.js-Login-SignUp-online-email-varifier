@@ -5,10 +5,10 @@ const { config } = require('dotenv');
 config();
 const oAuth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URI);
 oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
-async function sendMail(email) {
+async function sendMail(email, key) {
     try {
         const accsessToken = await oAuth2Client.getAccessToken();
-        //const url = 'localhost:123/signUp';
+        const code = 'http://localhost:1290/verifying/' + key;
         const transport = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -25,7 +25,7 @@ async function sendMail(email) {
             to: email,
             subject: 'Varify your Account!',
             text: 'Hello from Node.js',
-            html: '<p>To confirm your account,click this <a href="http://localhost:123/signUp"><span>link</span></a>.<br>This is a <b>test</b> email.</p>'
+            html: `<p>To confirm your account,click this <a href=${code}>link</a></p>`
         };
         const result = await transport.sendMail(mailOptions);
         return result;
@@ -33,10 +33,5 @@ async function sendMail(email) {
         return err;
     }
 }
-// sendMail()
-//     .then(data => { console.log(data); })
-//     .catch(err => { console.log(err); });
-
-
 
 module.exports.sendMail = sendMail;
