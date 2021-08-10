@@ -1,4 +1,4 @@
-const { Router, response } = require('express');
+const { Router } = require('express');
 const jwt = require('jsonwebtoken');
 const express = require('express');
 const { login, signUp, isEmailExist, validator, makeUserVerified } = require('./db.js');
@@ -10,7 +10,7 @@ const bodyEncoder = app.use(bodyParser.urlencoded({ extended: false }))
 router.post('/login', bodyEncoder, (req, res) => {
     login(req.body.email, req.body.password)
         .then(data => {
-            jwt.sign({ email: req.body.email, password: req.body.password }, 'secretkey', { expiresIn: '60s' }, (err, token) => {
+            jwt.sign({ email: req.body.email, password: req.body.password }, process.env.SECRET_KEY, { expiresIn: '60s' }, (err, token) => {
                 res.json({ data, token });
             })
         })
@@ -27,7 +27,7 @@ router.post('/signUp', bodyEncoder, (req, res) => {
             return signUp(req.body.email, req.body.password);
         })
         .then(data => {
-            res.send("Please! check your email to verify!");
+            res.send(data.data);
             return sendMail(req.body.email, data.key)
         })
         .then(data => {
@@ -37,7 +37,7 @@ router.post('/signUp', bodyEncoder, (req, res) => {
 
 });
 router.post('/resource', verifyToken, (req, res) => {
-    jwt.verify(req.token, 'secretkey', (err, authData) => {
+    jwt.verify(req.token, process.env.SECRET_KEY, (err, authData) => {
         if (err) res.send("Something is wrong! Login again!");
         else {
             res.json({
@@ -60,7 +60,7 @@ function verifyToken(req, res, next) {
         req.token = bearerHeader;
         next();
     } else {
-        res.json({ message: "Your are not allowed" });
+        res.json({ message: "You are not allowed" });
     }
 }
 module.exports.router = router;

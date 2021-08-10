@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
-const { gmail } = require('googleapis/build/src/apis/gmail');
+//const { gmail } = require('googleapis/build/src/apis/gmail');
 const { config } = require('dotenv');
 config();
 const oAuth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URI);

@@ -17,7 +17,7 @@ function signUp(email, password) {
             if (err) {
                 reject(err);
             } else resolve({
-                data: "Your have successfully Signup!",
+                data: "Your have successfully Signup! Please! check your email to verify!",
                 key: hashKey
             });
         });
@@ -28,7 +28,6 @@ function signUp(email, password) {
 
 function login(email, password) {
     return new Promise((resolve, reject) => {
-
         pool.query("SELECT verified,password FROM Account where email =$1 ", [email], (err, res) => {
             if (err) {
                 reject(err);
@@ -92,6 +91,7 @@ function makeUserVerified(key) {
             if (err) {
                 reject(err);
             } else {
+                console.log("Done!");
                 resolve('<h3>You have successfuly verified your Account!</h3>');
             }
         });
